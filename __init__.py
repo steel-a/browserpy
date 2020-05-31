@@ -11,11 +11,13 @@ class BrowserPy:
 
             from selenium.webdriver.chrome.options import Options
             chrome_options = Options()
-            #chrome_options.add_argument("--disable-extensions")
-            #chrome_options.add_argument("--disable-gpu")
-            #chrome_options.add_argument("--no-sandbox") # linux only
+            chrome_options.add_argument("--window-size=1920,1080")
+            chrome_options.add_argument("--disable-extensions")
+            chrome_options.add_argument("--disable-gpu")
+            chrome_options.add_argument("--no-sandbox") # linux only
             chrome_options.add_argument("--headless")
             # chrome_options.headless = True # also works
+            #chrome_options.add_argument("--disable-dev-shm-usage") # or in docker run command: --shm-size=1G or -v /dev/shm:/dev/shm
             self.driver = webdriver.Chrome(options=chrome_options)
 
         else:
@@ -32,13 +34,14 @@ class BrowserPy:
         :param assertText: After page loads, it should has this text
         :return: True if page is load and have 'assertText' (case this parameter is used). False otherwise.
         """
+        self.driver.get(url)
         if assertText is not None and assertText not in self.getText():
             return False
 
         return True
 
-    def getText(self, by:str='name', name:str='html', regexPattern:str=None):
-        e = self.getElement(by, name)
+    def getText(self, by:str='tag', name:str='html', regexPattern:str=None):
+        e = self.el(by, name)
         if e is None:
             return ''
         
@@ -78,7 +81,7 @@ class BrowserPy:
         else:
             return None
 
-    def getElement(self, by:str, name:str, text:str=None, textExactMatch:bool=True):
+    def el(self, by:str, name:str, text:str=None, textExactMatch:bool=True):
         if(text is None):
             try:
                 el = self.driver.find_element(self.mapBy(by),name)
@@ -95,8 +98,7 @@ class BrowserPy:
                     return e
         return None
 
-    def click(self, by:str, name:str, text:str=None, textExactMatch:bool=True) -> bool:
-        el = self.getElement(by, name, text, textExactMatch)
+    def click(self, el) -> bool:
         if el is None:
             return False
 
@@ -107,7 +109,7 @@ class BrowserPy:
 
         return True
 
-    def sendKeys(self, keys:str, by:str, name:str, text:str=None, textExactMatch:bool=True) -> bool:
+    def sendKeys(self, el, keys:str) -> bool:
         el = self.getElement(by, name, text, textExactMatch)
         if el is None:
             return False
