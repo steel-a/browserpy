@@ -7,6 +7,7 @@ class BrowserPy:
     def __init__(self, profile:str='chrome-headless'):
         self.driver = None
 
+
         if profile=='chrome-headless':
 
             from selenium.webdriver.chrome.options import Options
@@ -23,9 +24,11 @@ class BrowserPy:
         else:
             raise ValueError(profile+' is not a valid value.')
 
+
     def __del__(self):
         if self.driver is None:
             self.driver.quit()
+
 
     def open(self, url:str, assertText:str=None):
         """
@@ -35,10 +38,15 @@ class BrowserPy:
         :return: True if page is load and have 'assertText' (case this parameter is used). False otherwise.
         """
         self.driver.get(url)
+        return assertText(assertText)
+
+
+    def assertText(self, assertText:str) -> bool:
         if assertText is not None and assertText not in self.getText():
             return False
 
-        return True
+        return True        
+
 
     def getText(self, by:str='tag', name:str='html', regexPattern:str=None):
         e = self.el(by, name)
@@ -53,6 +61,7 @@ class BrowserPy:
             return match.group()
         else:
             return ''            
+
 
     def mapBy(self, by):
         if by=="id":
@@ -74,12 +83,14 @@ class BrowserPy:
         else:
             raise ValueError(f'By [{by}] could not be mapped.')
 
+
     def getElements(self, by:str, name:str):
         elements = self.driver.find_elements(self.mapBy(by),name)
         if len(elements)>0:
             return elements
         else:
             return None
+
 
     def el(self, by:str, name:str, text:str=None, textExactMatch:bool=True):
         if(text is None):
@@ -98,7 +109,8 @@ class BrowserPy:
                     return e
         return None
 
-    def click(self, el) -> bool:
+
+    def click(self, el, assertText:str=None) -> bool:
         if el is None:
             return False
 
@@ -107,10 +119,10 @@ class BrowserPy:
         except:
             return False
 
-        return True
+        return assertText(assertText)
+
 
     def sendKeys(self, el, keys:str) -> bool:
-        el = self.getElement(by, name, text, textExactMatch)
         if el is None:
             return False
 
