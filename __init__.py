@@ -37,6 +37,17 @@ class BrowserPy:
             self.driver.close()
 
 
+    def __enter__(self):
+        return self
+
+
+    def __exit__(self, type, value, tb):
+        if self.driver is not None:
+            self.driver.close()
+        if tb is not None:
+            return False
+
+
     def open(self, url:str, assertText:str=None, assertAttemps:int=1, assertTime:float=1):
         """
         -> Loads a web page in the current browser session
