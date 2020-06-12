@@ -194,3 +194,7 @@ class BrowserPy:
 
         return self.assertText(assertText, assertAttemps, assertTime) #2 and 3
 
+
+    def getTextFromPage(self, uri:str, assertText:str):
+        self.open(uri,assertText)
+        return self.getText()
