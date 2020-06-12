@@ -11,7 +11,7 @@ assert b.assertText('Why GitHub?') #2
 assert b.assertText('Why GitHub?',5) #2
 assert b.assertText('Why GitHub?',2,5) #2
 assert b.assertText('Why GitHub?',0,0) == False #3
-assert b.assertText('Loren ipsun') == False #3
+assert b.assertText('Loren ipsum') == False #3
 
 # function mapBy
 assert b.mapBy(b.by.ID) == b.by.ID #1
