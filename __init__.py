@@ -15,21 +15,8 @@ class BrowserPy:
     driver = None
 
     def __init__(self, profile:str='chrome-headless-docker'):
-
-        if profile=='chrome-headless-docker':
-
-            from selenium.webdriver.chrome.options import Options
-            chrome_options = Options()
-            chrome_options.add_argument("--window-size=1920,1080")
-            chrome_options.add_argument("--disable-extensions")
-            chrome_options.add_argument("--disable-gpu")
-            chrome_options.add_argument("--no-sandbox") # linux only
-            chrome_options.add_argument("--headless")
-            # chrome_options.headless = True # also works
-            self.driver = webdriver.Chrome(options=chrome_options)
-
-        else:
-            raise ValueError(profile+' is not a valid value.')
+        self.profile = profile
+        self.driver = None
 
 
     def __del__(self):
@@ -48,31 +35,51 @@ class BrowserPy:
             return False
 
 
-    def open(self, url:str, assertText:str=None, assertAttemps:int=1, assertTime:float=1):
+    def createDriver(self):
+        if self.profile=='chrome-headless-docker':
+
+            from selenium.webdriver.chrome.options import Options
+            chrome_options = Options()
+            chrome_options.add_argument("--window-size=1920,1080")
+            chrome_options.add_argument("--disable-extensions")
+            chrome_options.add_argument("--disable-gpu")
+            chrome_options.add_argument("--no-sandbox") # linux only
+            chrome_options.add_argument("--headless")
+            # chrome_options.headless = True # also works
+            self.driver = webdriver.Chrome(options=chrome_options)
+
+        else:
+            raise ValueError(self.profile+' is not a valid value.')
+
+
+    def open(self, url:str, assertText:str=None, assertAttempts:int=1, assertTime:float=1):
         """
         -> Loads a web page in the current browser session
         :param url: Url to be openned
         :param assertText: Text that must be in page
-        :param assertAtemps: How many tries it will be done
-        :param assertTime: Time (in secons) between tries
+        :param assertAttempts: How many tries it will be done
+        :param assertTime: Time (in seconds) between tries
         :return: True/False -> True if page is load and have 'assertText' (case this parameter is used). False otherwise.
         """
+        if self.driver is None:
+            self.createDriver()
+
         self.driver.get(url)
-        return self.assertText(assertText, assertAttemps, assertTime)
+        return self.assertText(assertText, assertAttempts, assertTime)
 
 
-    def assertText(self, assertText:str, assertAttemps:int=1, assertTime:float=1) -> bool:
+    def assertText(self, assertText:str, assertAttempts:int=1, assertTime:float=1) -> bool:
         """
         -> Search for a text inside actual page text
         :param assertText: Text that must be in page
-        :param assertAtemps: How many tries it will be done
-        :param assertTime: Time (in secons) between tries
+        :param assertAttempts: How many tries it will be done
+        :param assertTime: Time (in seconds) between tries
         :return: True/False. True if assertText is in actual page text
         """
         if assertText is None:
             return True #1
 
-        for _ in range(assertAttemps):
+        for _ in range(assertAttempts):
             if assertText in self.getText():
                 return True #2
             time.sleep(assertTime)
@@ -86,7 +93,7 @@ class BrowserPy:
         :param by: What type of element will be searched
         :param name: Param to search the element
         :param regexPattern: a regex expression to be searched inside the text of the element
-        :param regexGroup: wich regex group will be returnet
+        :param regexGroup: which regex group will be returned
         :return: Text found or '' otherwise
         """        
         e = self.el(by, name)
@@ -157,7 +164,7 @@ class BrowserPy:
         return None #5
 
 
-    def click(self, el:WebElement, assertText:str=None, assertAttemps:int=3, assertTime:float=1) -> bool:
+    def click(self, el:WebElement, assertText:str=None, assertAttempts:int=3, assertTime:float=1) -> bool:
         """
         -> Click on element 'el' and optionally assert for a text on page after the click
         :return: True/False. True if click and then page has the text, False otherwise
@@ -170,10 +177,10 @@ class BrowserPy:
         except:
             return False #2
 
-        return self.assertText(assertText, assertAttemps, assertTime) #3
+        return self.assertText(assertText, assertAttempts, assertTime) #3
 
 
-    def sendKeys(self, el:WebElement, keys, assertText:str=None, assertAttemps:int=3, assertTime:float=1) -> bool:
+    def sendKeys(self, el:WebElement, keys, assertText:str=None, assertAttempts:int=3, assertTime:float=1) -> bool:
         """
         -> Send keys to an element and optionally assert for a text on page after the send
         :return: True/False. True if send keys and then page has the text, False otherwise
@@ -192,7 +199,7 @@ class BrowserPy:
         except:
             return False #5
 
-        return self.assertText(assertText, assertAttemps, assertTime) #2 and 3
+        return self.assertText(assertText, assertAttempts, assertTime) #2 and 3
 
 
     def getTextFromPage(self, uri:str, assertText:str):
