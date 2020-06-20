@@ -48,7 +48,7 @@ assert b.el('tag','a','aaaaa') == None #5
 
 # function click - I could not test #2 return
 assert b.click(b.el('link','aaaaa')) == False #1
-assert b.click(b.el(b.by.LINK_TEXT,'Marketplace'),"Loren ipsun") == False #3
+assert b.click(b.el(b.by.LINK_TEXT,'Marketplace'),"Loren ipsum") == False #3
 assert b.click(b.el(b.by.LINK_TEXT,'Marketplace'),"Extend GitHub") #3
 
 # function sendKeys - I could not test #5 return
@@ -56,7 +56,7 @@ assert b.sendKeys(b.el('link','aaaaa'),'keys') == False #1
 assert b.sendKeys(b.el(b.by.CLASS_NAME,'header-search-input'),'python') #2
 assert b.sendKeys(b.el(b.by.CLASS_NAME,'header-search-input'),b.keys.ENTER,'repository results') #2
 assert b.sendKeys(b.el(b.by.CLASS_NAME,'header-search-input'),('python',b.keys.ENTER),'repository results') #3
-assert b.sendKeys(b.el(b.by.CLASS_NAME,'header-search-input'),('python',b.keys.ENTER),'Loren ipsun') == False #3
+assert b.sendKeys(b.el(b.by.CLASS_NAME,'header-search-input'),('python',b.keys.ENTER),'Loren ipsum') == False #3
 assert b.sendKeys(b.el(b.by.CLASS_NAME,'header-search-input'),list(range(5))) == False #4
 
 # function getText
