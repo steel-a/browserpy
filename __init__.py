@@ -21,7 +21,11 @@ class BrowserPy:
 
     def __del__(self):
         if self.driver is not None:
-            self.driver.close()
+            try: self.driver.close()
+            except: pass
+            finally:
+                try: self.driver.quit()
+                except: pass
 
 
     def __enter__(self):
@@ -164,7 +168,7 @@ class BrowserPy:
         return None #5
 
 
-    def click(self, el:WebElement, assertText:str=None, assertAttempts:int=3, assertTime:float=1) -> bool:
+    def click(self, el:WebElement, assertText:str=None, assertAttempts:int=3, assertTime:float=1, timeSleep:float=0) -> bool:
         """
         -> Click on element 'el' and optionally assert for a text on page after the click
         :return: True/False. True if click and then page has the text, False otherwise
@@ -174,6 +178,7 @@ class BrowserPy:
 
         try:
             el.click()
+            time.sleep(timeSleep)
         except:
             return False #2
 
