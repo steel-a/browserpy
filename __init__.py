@@ -41,7 +41,6 @@ class BrowserPy:
 
     def createDriver(self):
         if self.profile=='chrome-headless-docker':
-
             from selenium.webdriver.chrome.options import Options
             chrome_options = Options()
             chrome_options.add_argument("--window-size=1920,1080")
@@ -51,7 +50,13 @@ class BrowserPy:
             chrome_options.add_argument("--headless")
             # chrome_options.headless = True # also works
             self.driver = webdriver.Chrome(options=chrome_options)
-
+        elif self.profile=='firefox-headless-docker':
+            from selenium.webdriver.firefox.options import Options
+            options = Options()
+            options.headless = True
+            options.add_argument("-width=1920")
+            options.add_argument("-height=1080")
+            self.driver = webdriver.Firefox(options=options)
         else:
             raise ValueError(self.profile+' is not a valid value.')
 
