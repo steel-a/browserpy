@@ -14,7 +14,8 @@ class BrowserPy:
     by = By
     driver = None
 
-    def __init__(self, profile:str='chrome-headless-docker'):
+    def __init__(self, profile:str='chrome-headless-docker', config:dict=None):
+        self.config = config
         self.profile = profile
         self.driver = None
 
@@ -57,6 +58,15 @@ class BrowserPy:
             options.add_argument("-width=1920")
             options.add_argument("-height=1080")
             self.driver = webdriver.Firefox(options=options)
+        elif self.profile=='chrome-remote':
+            try:
+                url = self.config['selenium-chrome-remote-url']
+            except:
+                raise Exception("To use chrome-remote parameter, it's necessary to pass a second parameter in BrowserPy instance creation:\na dict with a key named 'selenium-chrome-remote-url' with the url as value.")
+            self.driver = webdriver.Remote(
+                desired_capabilities=webdriver.DesiredCapabilities.CHROME,
+                command_executor=url,
+            )            
         else:
             raise ValueError(self.profile+' is not a valid value.')
 
