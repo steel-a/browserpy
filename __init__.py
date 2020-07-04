@@ -200,7 +200,8 @@ class BrowserPy:
         return self.assertText(assertText, assertAttempts, assertTime) #3
 
 
-    def sendKeys(self, el:WebElement, keys, assertText:str=None, assertAttempts:int=3, assertTime:float=1) -> bool:
+    def sendKeys(self, el:WebElement, keys, clearBefore:bool=False, assertText:str=None,
+                    assertAttempts:int=3, assertTime:float=1, timeSleep:float=0) -> bool:
         """
         -> Send keys to an element and optionally assert for a text on page after the send
         :return: True/False. True if send keys and then page has the text, False otherwise
@@ -209,6 +210,8 @@ class BrowserPy:
             return False #1
 
         try:
+            if clearBefore:
+                el.clear()
             if isinstance(keys, str): #->2
                 el.send_keys(keys)
             elif isinstance(keys,tuple): #->3
@@ -218,7 +221,7 @@ class BrowserPy:
                 return False #4
         except:
             return False #5
-
+        time.sleep(timeSleep)
         return self.assertText(assertText, assertAttempts, assertTime) #2 and 3
 
 
