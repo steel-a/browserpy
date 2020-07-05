@@ -4,6 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import Select
 
 class BrowserPy:
     """
@@ -228,3 +229,10 @@ class BrowserPy:
     def getTextFromPage(self, uri:str, assertText:str):
         self.open(uri,assertText)
         return self.getText()
+
+    def select(self, el:WebElement, valueOrText, selectByVisibleText:bool=True):
+        if el != None:
+            if selectByVisibleText:
+                Select(el).select_by_visible_text(valueOrText)
+            else:
+                Select(el).select_by_value(valueOrText)
