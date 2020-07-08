@@ -162,24 +162,34 @@ class BrowserPy:
         return self.driver.find_elements(self.mapBy(by),name) #1
 
 
-    def el(self, by:str, name:str, text:str=None, textExactMatch:bool=True):
+    def el(self, by:str, name:str, text:str=None, textExactMatch:bool=True, attr:str=None, attrText:str=None, attrExactMatch:bool=True):
         """
         -> Get an element described by params 'by' and 'name' with the (optional) text 'text'
         :return: The element of type WebElement or None
         """
-        if(text is None):
+        if(text is None and attr is None):
             try:
                 el = self.driver.find_element(self.mapBy(by),name)
             except:
                 return None #1
             return el #2
         else:
+            textFound = True if text is None else False
+            attribFound = True if attr is None or attrText is None else False
+
             elements = self.getElements(by, name)
             if len(elements)==0:
                 return None #3
             for e in elements:
-                if(textExactMatch==True and text==e.text) or \
-                    (textExactMatch==False and text in e.text):
+                if (not textFound) \
+                    and ((textExactMatch==True and text==e.text) \
+                        or (textExactMatch==False and text in e.text)):
+                    textFound = True
+                if (not attribFound) \
+                    and ((attrExactMatch==True and attrText==e.get_attribute(attr)) \
+                        or (attrExactMatch==False and attrText in e.get_attribute(attr))):
+                    attribFound = True
+                if textFound and attribFound:
                     return e #4
         return None #5
 
@@ -212,6 +222,7 @@ class BrowserPy:
 
         try:
             if clearBefore:
+                el.click()
                 el.clear()
             if isinstance(keys, str): #->2
                 el.send_keys(keys)
