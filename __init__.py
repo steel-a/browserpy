@@ -241,9 +241,12 @@ class BrowserPy:
         self.open(uri,assertText)
         return self.getText()
 
-    def select(self, el:WebElement, valueOrText, selectByVisibleText:bool=True):
+    def select(self, el:WebElement, valueOrText, selectByVisibleText:bool=True, assertText:str=None,
+                    assertAttempts:int=3, assertTime:float=1, timeSleep:float=0):
         if el != None:
             if selectByVisibleText:
                 Select(el).select_by_visible_text(valueOrText)
             else:
                 Select(el).select_by_value(valueOrText)
+        time.sleep(timeSleep)
+        return self.assertText(assertText, assertAttempts, assertTime) #2 and 3
