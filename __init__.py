@@ -72,7 +72,7 @@ class BrowserPy:
             raise ValueError(self.profile+' is not a valid value.')
 
 
-    def open(self, url:str, assertText:str=None, assertAttempts:int=1, assertTime:float=1):
+    def open(self, url:str, assertText:str=None, assertAttempts:int=1, assertTime:float=1, numOfRefreshes:int=0):
         """
         -> Loads a web page in the current browser session
         :param url: Url to be openned
@@ -85,7 +85,11 @@ class BrowserPy:
             self.createDriver()
 
         self.driver.get(url)
-        return self.assertText(assertText, assertAttempts, assertTime)
+        for _ in range(numOfRefreshes+1):
+            if self.assertText(assertText, assertAttempts, assertTime):
+                return True
+            self.driver.refresh()
+        return False
 
 
     def assertText(self, assertText:str, assertAttempts:int=1, assertTime:float=1) -> bool:
