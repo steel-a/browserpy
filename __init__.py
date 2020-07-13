@@ -208,12 +208,20 @@ class BrowserPy:
 
         try:
             el.click()
-            time.sleep(timeSleep)
         except:
-            return False #2
+            try:
+                webdriver.ActionChains(self.driver).move_to_element(el).click(el).perform()
+                self.driver.execute_script("arguments[0].click();", el)
+            except: pass
+        time.sleep(timeSleep)
 
         return self.assertText(assertText, assertAttempts, assertTime) #3
 
+#    def click2(self, el, timeSleep:float=0):
+#        webdriver.ActionChains(self.driver).move_to_element(el).click(el).perform()        
+
+#    def click3(self, el, timeSleep:float=0):
+#        self.driver.execute_script("arguments[0].click();", el)        
 
     def sendKeys(self, el:WebElement, keys, clearBefore:bool=False, assertText:str=None,
                     assertAttempts:int=3, assertTime:float=1, timeSleep:float=0) -> bool:
