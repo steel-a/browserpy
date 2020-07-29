@@ -67,7 +67,8 @@ class BrowserPy:
             self.driver = webdriver.Remote(
                 desired_capabilities=webdriver.DesiredCapabilities.CHROME,
                 command_executor=url,
-            )            
+            )
+            self.driver.set_window_size(1920, 1080)            
         else:
             raise ValueError(self.profile+' is not a valid value.')
 
@@ -103,10 +104,18 @@ class BrowserPy:
         if assertText is None:
             return True #1
 
-        for _ in range(assertAttempts):
-            if assertText in self.getText():
-                return True #2
-            time.sleep(assertTime)
+        if '|' in assertText:
+            assertTextSplitted = assertText.split('|')
+            for _ in range(assertAttempts):
+                for text in assertTextSplitted:
+                    if text in self.getText():
+                        return True #2
+                time.sleep(assertTime)
+        else:
+            for _ in range(assertAttempts):
+                if assertText in self.getText():
+                    return True #2
+                time.sleep(assertTime)
 
         return False #3
 
