@@ -59,6 +59,23 @@ class BrowserPy:
             options.add_argument("-width=1920")
             options.add_argument("-height=1080")
             self.driver = webdriver.Firefox(options=options)
+        elif self.profile=='firefox-headless-random':
+            import random
+
+            import requests
+            r = requests.get('https://gist.githubusercontent.com/fijimunkii/952acac988f2d25bef7e0284bc63c406/raw/190452518c6bcc856b751333a0556588da0daf45/ua.json')
+            userAgent = r.json()[random.randint(0,len(r.json())-1)]
+
+            profile = webdriver.FirefoxProfile()
+            profile.set_preference("general.useragent.override", userAgent)
+
+            from selenium.webdriver.firefox.options import Options
+            options = Options()
+            options.headless = True
+            options.add_argument("-width="+str(random.randint(1895,1915)))
+            options.add_argument("-height="+str(random.randint(1035,1040)))
+
+            self.driver = webdriver.Firefox(options=options, firefox_profile=profile)            
         elif self.profile=='chrome-remote':
             try:
                 url = self.config['selenium-chrome-remote-url']
