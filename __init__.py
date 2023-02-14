@@ -15,7 +15,7 @@ class BrowserPy:
     by = By
     driver = None
 
-    def __init__(self, profile:str='chrome-headless-docker', config:dict=None):
+    def __init__(self, profile:str='firefox', config:dict=None):
         self.config = config
         self.profile = profile
         self.driver = None
@@ -59,6 +59,16 @@ class BrowserPy:
             options.add_argument("-width=1920")
             options.add_argument("-height=1080")
             self.driver = webdriver.Firefox(options=options)
+        elif self.profile=='firefox':
+            from selenium.webdriver.firefox.options import Options
+            from selenium.webdriver import FirefoxProfile
+            profile = FirefoxProfile("/home/stella/.mozilla/firefox/teste")
+
+            options = Options()
+            options.headless = False
+            options.add_argument("-width=1366")
+            options.add_argument("-height=768")
+            self.driver = webdriver.Firefox(options=options, firefox_profile=profile)
         elif self.profile=='firefox-headless-random':
             import random
 
@@ -275,8 +285,8 @@ class BrowserPy:
         return self.assertText(assertText, assertAttempts, assertTime) #2 and 3
 
 
-    def getTextFromPage(self, uri:str, assertText:str):
-        self.open(uri,assertText)
+    def getTextFromPage(self, uri:str, assertText:str, assertAttempts:int=3, assertTime:float=3, numOfRefreshes:int=0):
+        self.open(uri,assertText,assertAttempts,assertTime,numOfRefreshes)
         return self.getText()
 
     def select(self, el:WebElement, valueOrText, selectByVisibleText:bool=True, assertText:str=None,
