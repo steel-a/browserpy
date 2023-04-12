@@ -62,7 +62,7 @@ class BrowserPy:
         elif self.profile=='firefox':
             from selenium.webdriver.firefox.options import Options
             from selenium.webdriver import FirefoxProfile
-            profile = FirefoxProfile("/home/stella/.mozilla/firefox/teste")
+            profile = FirefoxProfile("/home/stella/.mozilla/firefox/selenium")
 
             options = Options()
             options.headless = False
