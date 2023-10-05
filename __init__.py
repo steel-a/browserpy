@@ -88,14 +88,34 @@ class BrowserPy:
             self.driver = webdriver.Firefox(options=options, firefox_profile=profile)            
         elif self.profile=='chrome-remote':
             try:
-                url = self.config['selenium-chrome-remote-url']
+                url = self.config.item['selenium-remote-url']
             except:
                 raise Exception("To use chrome-remote parameter, it's necessary to pass a second parameter in BrowserPy instance creation:\na dict with a key named 'selenium-chrome-remote-url' with the url as value.")
             self.driver = webdriver.Remote(
-                desired_capabilities=webdriver.DesiredCapabilities.CHROME,
+                desired_capabilities=DesiredCapabilities.CHROME,
                 command_executor=url,
             )
-            self.driver.set_window_size(1920, 1080)            
+            self.driver.set_window_size(1920, 1080)
+        elif self.profile=='firefox-remote':
+            try:
+                url = self.config.item['selenium-remote-url']
+            except:
+                raise Exception("To use chrome-remote parameter, it's necessary to pass a second parameter in BrowserPy instance creation:\na dict with a key named 'selenium-chrome-remote-url' with the url as value.")
+
+            try:
+                from selenium.webdriver.firefox.options import Options as FirefoxOptions
+                options = FirefoxOptions()
+                #cloud_options = {}
+                #cloud_options['build'] = "build_1"
+                #cloud_options['name'] = "test_abc"
+                #options.set_capability('cloud:options', cloud_options)
+                self.driver = webdriver.Remote(url, options=options)
+                self.driver.implicitly_wait(30)
+                self.driver.maximize_window() # Note: driver.maximize_window does not work on Linux selenium version v2, instead set window size and window position like driver.set_window_position(0,0) and driver.set_window_size(1920,1080)
+
+            except:
+                raise Exception("Couldn't open remote Firefox")
+
         else:
             raise ValueError(self.profile+' is not a valid value.')
 
